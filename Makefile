@@ -1,11 +1,17 @@
-all: lib obj lib/magic6502.a
+all: lib obj obj/test bin lib/libmagic6502.a bin/test
+
+bin/test: lib/libmagic6502.a obj/test/main.o
+	gcc -lm -o bin/test obj/test/main.o -L./lib -lmagic6502
+
+obj/test/%.o: test/%.c
+	gcc -Wall -O -c $< -Iinclude -o $@
 
 obj/%.o: src/%.c
-	gcc -O -c $< -Iinclude -o $@
+	gcc -Wall -O -c $< -Iinclude -o $@
 
-lib/magic6502.a: obj/magic6502.o obj/addressing.o obj/execute.o \
+lib/libmagic6502.a: obj/magic6502.o obj/addressing.o obj/execute.o \
 	obj/instr_helpers.o obj/instructions.o obj/interrupts.o
-	ar rcs ./lib/magic6502.a obj/magic6502.o obj/addressing.o obj/execute.o \
+	ar rcs ./lib/libmagic6502.a obj/magic6502.o obj/addressing.o obj/execute.o \
 		obj/instr_helpers.o obj/instructions.o obj/interrupts.o
 
 lib:
@@ -13,3 +19,12 @@ lib:
 
 obj:
 	mkdir obj
+
+obj/test: obj
+	mkdir obj/test
+
+bin:
+	mkdir bin
+
+clean:
+	rm -f obj/* lib/* bin/*

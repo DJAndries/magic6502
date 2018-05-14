@@ -15,7 +15,7 @@ void carry_calc(magic6502_ctx* ctx, unsigned short result) {
 }
 
 void negative_calc(magic6502_ctx* ctx, unsigned short result) {
-  ctx->n = (result & 0x80) >> 7
+  ctx->n = (result & 0x80) >> 7;
 }
 
 void set_acc(magic6502_ctx* ctx, unsigned short result) {

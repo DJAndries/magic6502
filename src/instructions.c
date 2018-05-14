@@ -7,7 +7,7 @@ void adc(magic6502_ctx* ctx, unsigned char val) {
   carry_calc(ctx, result);
   overflow_calc(ctx, val, result);
   negative_calc(ctx, result);
-  set_acc(ctx, result)
+  set_acc(ctx, result);
 }
 
 void and(magic6502_ctx* ctx, unsigned char val) {
@@ -83,8 +83,8 @@ char bpl(magic6502_ctx* ctx, unsigned short addr) {
 }
 
 void brk(magic6502_ctx* ctx) {
-  push_short_to_stack(ctx->pc + 1);
-  push_to_stack(serialize_status(ctx));
+  push_short_to_stack(ctx, ctx->pc + 1);
+  push_to_stack(ctx, serialize_status(ctx));
   ctx->pc = (*ctx->memory)[0xFFFE] & ((*ctx->memory)[0xFFFF] << 8);
   ctx->b = 1;
   ctx->i = 1;
@@ -126,21 +126,21 @@ void cmp(magic6502_ctx* ctx, unsigned char val) {
   unsigned short result = ctx->a - val;
   negative_calc(ctx, result);
   zero_calc(ctx, result);
-  ctx->c = cta->a >= val;
+  ctx->c = ctx->a >= val;
 }
 
 void cpx(magic6502_ctx* ctx, unsigned char val) {
   unsigned short result = ctx->x - val;
   negative_calc(ctx, result);
   zero_calc(ctx, result);
-  ctx->c = cta->x >= val;
+  ctx->c = ctx->x >= val;
 }
 
 void cpy(magic6502_ctx* ctx, unsigned char val) {
   unsigned short result = ctx->y - val;
   negative_calc(ctx, result);
   zero_calc(ctx, result);
-  ctx->c = cta->y >= val;
+  ctx->c = ctx->y >= val;
 }
 
 void dec(magic6502_ctx* ctx, unsigned short addr) {

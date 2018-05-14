@@ -4,7 +4,7 @@
 #define MAGIC6502_INT_BRK 1
 #define MAGIC6502_INT_IRQ 2
 #define MAGIC6502_INT_NMI 3
-#define MAGIC6502_INT_RESET 3
+#define MAGIC6502_INT_RESET 4
 
 typedef struct {
   unsigned short pc;

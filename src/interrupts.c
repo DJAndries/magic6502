@@ -1,5 +1,6 @@
 #include "interrupts.h"
 #include "instr_helpers.h"
+#include <string.h>
 
 void reset_registers(magic6502_ctx* ctx) {
   unsigned char** memory = ctx->memory;
@@ -30,8 +31,8 @@ void execute_interrupt(magic6502_ctx* ctx, char type) {
       break;
   }
   if (type != MAGIC6502_INT_RESET) {
-    push_short_to_stack(ctx->pc + 1);
-    push_to_stack(serialize_status(ctx));
+    push_short_to_stack(ctx, ctx->pc + 1);
+    push_to_stack(ctx, serialize_status(ctx));
   }
   ctx->i = 1;
   ctx->pc = (*ctx->memory)[addr_vector] & ((*ctx->memory)[addr_vector + 1] << 8);

@@ -34,7 +34,7 @@ void execute(magic6502_ctx* ctx) {
       pc_inc = 3;
       break;
     case 0x0E:
-      asl(ctx, fetch_char(ctx, absolute_addr(ctx)));
+      asl(ctx, absolute_addr(ctx), 0);
       pc_inc = 3;
       break;
     case 0x10:
@@ -54,15 +54,15 @@ void execute(magic6502_ctx* ctx) {
       pc_inc = 1;
       break;
     case 0x19:
-      ora(ctx, absolute_y_addr(ctx), 0);
+      ora(ctx, fetch_char(ctx, absolute_y_addr(ctx)));
       pc_inc = 3;
       break;
     case 0x1D:
-      ora(ctx, absolute_x_addr(ctx), 0);
+      ora(ctx, fetch_char(ctx, absolute_x_addr(ctx)));
       pc_inc = 3;
       break;
     case 0x1E:
-      asl(ctx, fetch_char(ctx, absolute_x_addr(ctx)));
+      asl(ctx, absolute_x_addr(ctx), 0);
       pc_inc = 3;
       break;
     case 0x20:
@@ -263,13 +263,13 @@ void execute(magic6502_ctx* ctx) {
       sta(ctx, indexed_indirect_addr(ctx));
       break;
     case 0x84:
-      sty(ctx, zero_page(ctx));
+      sty(ctx, zero_page_addr(ctx));
       break;
     case 0x85:
-      sta(ctx, zero_page(ctx));
+      sta(ctx, zero_page_addr(ctx));
       break;
     case 0x86:
-      stx(ctx, zero_page(ctx));
+      stx(ctx, zero_page_addr(ctx));
       break;
     case 0x88:
       dey(ctx);
@@ -407,13 +407,13 @@ void execute(magic6502_ctx* ctx) {
       cmp(ctx, fetch_char(ctx, indexed_indirect_addr(ctx)));
       break;
     case 0xC4:
-      cpy(ctx, fetch_char(ctx, zero_page(ctx)));
+      cpy(ctx, fetch_char(ctx, zero_page_addr(ctx)));
       break;
     case 0xC5:
-      cmp(ctx, fetch_char(ctx, zero_page(ctx)));
+      cmp(ctx, fetch_char(ctx, zero_page_addr(ctx)));
       break;
     case 0xC6:
-      dec(ctx, zero_page(ctx));
+      dec(ctx, zero_page_addr(ctx));
       break;
     case 0xC8:
       iny(ctx);
