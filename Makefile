@@ -1,17 +1,23 @@
-all: lib obj obj/test bin lib/libmagic6502.a bin/test
+all: lib obj bin lib/libmagic6502.so bin/test
 
-bin/test: lib/libmagic6502.a obj/test/main.o
-	gcc -lm -o bin/test obj/test/main.o -L./lib -lmagic6502
+bin/test: bin/test_prog.bin bin/libmagic6502.so obj/main.o
+	gcc -lm -o bin/test obj/main.o -L./lib -l:libmagic6502.so
 
-obj/test/%.o: test/%.c
+bin/test_prog.bin:
+	cp test/test_prog.bin bin/test_prog.bin
+
+bin/libmagic6502.so: lib/libmagic6502.so
+	cp lib/libmagic6502.so bin/libmagic6502.so
+
+obj/%.o: test/%.c
 	gcc -Wall -O -c $< -Iinclude -o $@
 
 obj/%.o: src/%.c
-	gcc -Wall -O -c $< -Iinclude -o $@
+	gcc -Wall -O -fpic -c $< -Iinclude -o $@
 
-lib/libmagic6502.a: obj/magic6502.o obj/addressing.o obj/execute.o \
+lib/libmagic6502.so: obj/magic6502.o obj/addressing.o obj/execute.o \
 	obj/instr_helpers.o obj/instructions.o obj/interrupts.o
-	ar rcs ./lib/libmagic6502.a obj/magic6502.o obj/addressing.o obj/execute.o \
+	gcc -fvisibility=hidden -shared -o ./lib/libmagic6502.so obj/magic6502.o obj/addressing.o obj/execute.o \
 		obj/instr_helpers.o obj/instructions.o obj/interrupts.o
 
 lib:
@@ -19,9 +25,6 @@ lib:
 
 obj:
 	mkdir obj
-
-obj/test: obj
-	mkdir obj/test
 
 bin:
 	mkdir bin

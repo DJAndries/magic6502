@@ -1,5 +1,6 @@
 #include "instructions.h"
 #include "instr_helpers.h"
+#include "interrupts.h"
 
 void adc(magic6502_ctx* ctx, unsigned char val) {
   unsigned short result = ctx->a + val + ctx->c;
@@ -28,28 +29,22 @@ void asl(magic6502_ctx* ctx, unsigned short addr, char a) {
   }
 }
 
-char bcc(magic6502_ctx* ctx, unsigned short addr) {
+void bcc(magic6502_ctx* ctx, unsigned short addr) {
   if (ctx->c == 0) {
     ctx->pc = addr;
-    return 1;
   }
-  return 0;
 }
 
-char bcs(magic6502_ctx* ctx, unsigned short addr) {
+void bcs(magic6502_ctx* ctx, unsigned short addr) {
   if (ctx->c == 1) {
     ctx->pc = addr;
-    return 1;
   }
-  return 0;
 }
 
-char beq(magic6502_ctx* ctx, unsigned short addr) {
+void beq(magic6502_ctx* ctx, unsigned short addr) {
   if (ctx->z == 1) {
     ctx->pc = addr;
-    return 1;
   }
-  return 0;
 }
 
 void bit(magic6502_ctx* ctx, unsigned char val) {
@@ -58,52 +53,38 @@ void bit(magic6502_ctx* ctx, unsigned char val) {
   ctx->v = (val >> 6) && 0x01;
 }
 
-char bmi(magic6502_ctx* ctx, unsigned short addr) {
+void bmi(magic6502_ctx* ctx, unsigned short addr) {
   if (ctx->n == 1) {
     ctx->pc = addr;
-    return 1;
   }
-  return 0;
 }
 
-char bne(magic6502_ctx* ctx, unsigned short addr) {
+void bne(magic6502_ctx* ctx, unsigned short addr) {
   if (ctx->z == 0) {
     ctx->pc = addr;
-    return 1;
   }
-  return 0;
 }
 
-char bpl(magic6502_ctx* ctx, unsigned short addr) {
+void bpl(magic6502_ctx* ctx, unsigned short addr) {
   if (ctx->n == 0) {
     ctx->pc = addr;
-    return 1;
   }
-  return 0;
 }
 
 void brk(magic6502_ctx* ctx) {
-  push_short_to_stack(ctx, ctx->pc + 1);
-  push_to_stack(ctx, serialize_status(ctx));
-  ctx->pc = (*ctx->memory)[0xFFFE] & ((*ctx->memory)[0xFFFF] << 8);
-  ctx->b = 1;
-  ctx->i = 1;
+  execute_interrupt(ctx, MAGIC6502_INT_BRK);
 }
 
-char bvc(magic6502_ctx* ctx, unsigned short addr) {
+void bvc(magic6502_ctx* ctx, unsigned short addr) {
   if (ctx->v == 0) {
     ctx->pc = addr;
-    return 1;
   }
-  return 0;
 }
 
-char bvs(magic6502_ctx* ctx, unsigned short addr) {
+void bvs(magic6502_ctx* ctx, unsigned short addr) {
   if (ctx->v == 1) {
     ctx->pc = addr;
-    return 1;
   }
-  return 0;
 }
 
 void clc(magic6502_ctx* ctx) {
@@ -236,7 +217,7 @@ void pha(magic6502_ctx* ctx) {
 }
 
 void php(magic6502_ctx* ctx) {
-  push_to_stack(ctx, serialize_status(ctx));
+  push_to_stack(ctx, serialize_status(ctx, 1));
 }
 
 void pla(magic6502_ctx* ctx) {
@@ -251,7 +232,7 @@ void plp(magic6502_ctx* ctx) {
 
 void rol(magic6502_ctx* ctx, unsigned short addr, char a) {
   unsigned char value = a == 1 ? a : (*ctx->memory)[addr];
-  unsigned char result = (value << 1) & ctx->c;
+  unsigned char result = (value << 1) | ctx->c;
   ctx->c = (value & 0x80) >> 7;
   if (a == 1) {
     ctx->a = result;
@@ -264,7 +245,7 @@ void rol(magic6502_ctx* ctx, unsigned short addr, char a) {
 
 void ror(magic6502_ctx* ctx, unsigned short addr, char a) {
   unsigned char value = a == 1 ? a : (*ctx->memory)[addr];
-  unsigned char result = (value >> 1) & (ctx->c << 7);
+  unsigned char result = (value >> 1) | (ctx->c << 7);
   ctx->c = value & 0x01;
   if (a == 1) {
     ctx->a = result;

@@ -23,31 +23,31 @@ void set_acc(magic6502_ctx* ctx, unsigned short result) {
 }
 
 void push_to_stack(magic6502_ctx* ctx, unsigned char value) {
-  (*ctx->memory)[0x0100 & ctx->sp] = value;
+  (*ctx->memory)[0x0100 | ctx->sp] = value;
   ctx->sp = ctx->sp - 1;
 }
 
 void push_short_to_stack(magic6502_ctx* ctx, unsigned short value) {
-  (*ctx->memory)[0x0100 & ctx->sp] = (value & 0xFF00) >> 8;
-  (*ctx->memory)[0x0100 & (ctx->sp - 1)] = value & 0xFF;
+  (*ctx->memory)[0x0100 | ctx->sp] = (value & 0xFF00) >> 8;
+  (*ctx->memory)[0x0100 | (ctx->sp - 1)] = value & 0xFF;
   ctx->sp = ctx->sp - 2;
 }
 
 unsigned char pull_from_stack(magic6502_ctx* ctx) {
-  unsigned char value = (*ctx->memory)[0x0100 & (ctx->sp + 1)];
+  unsigned char value = (*ctx->memory)[0x0100 | (ctx->sp + 1)];
   ctx->sp = ctx->sp + 1;
   return value;
 }
 
 unsigned short pull_short_from_stack(magic6502_ctx* ctx) {
-  unsigned short value = (*ctx->memory)[0x0100 & (ctx->sp + 1)] & ((*ctx->memory)[0x0100 & (ctx->sp + 2)] << 8);
+  unsigned short value = (*ctx->memory)[0x0100 | (ctx->sp + 1)] | ((*ctx->memory)[0x0100 | (ctx->sp + 2)] << 8);
   ctx->sp = ctx->sp + 2;
   return value;
 }
 
-unsigned char serialize_status(magic6502_ctx* ctx) {
-  return ctx->c & (ctx->z << 1) & (ctx->i << 2) \
-    & (ctx->d << 3) & (ctx->b << 4) & (ctx->v << 6) & (ctx->n << 7);
+unsigned char serialize_status(magic6502_ctx* ctx, unsigned char b) {
+  return ctx->c | (ctx->z << 1) | (ctx->i << 2) | (ctx->d << 3) \
+    | (b << 4) | (0x01 << 5) | (ctx->v << 6) | (ctx->n << 7);
 }
 
 void load_status(magic6502_ctx* ctx, unsigned char status) {

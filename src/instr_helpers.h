@@ -15,7 +15,7 @@ void push_short_to_stack(magic6502_ctx* ctx, unsigned short value);
 unsigned char pull_from_stack(magic6502_ctx* ctx);
 unsigned short pull_short_from_stack(magic6502_ctx* ctx);
 
-unsigned char serialize_status(magic6502_ctx* ctx);
+unsigned char serialize_status(magic6502_ctx* ctx, unsigned char b);
 void load_status(magic6502_ctx* ctx, unsigned char status);
 
 #endif

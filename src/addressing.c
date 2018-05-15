@@ -1,11 +1,12 @@
 #include "addressing.h"
+#include <stdio.h>
 
 unsigned char fetch_char(magic6502_ctx* ctx, unsigned short addr) {
   return (*ctx->memory)[addr];
 }
 
 unsigned short fetch_short(magic6502_ctx* ctx, unsigned short addr) {
-  return (*ctx->memory)[addr] + ((*ctx->memory)[addr + 1] << 8);
+  return (*ctx->memory)[addr] | ((*ctx->memory)[addr + 1] << 8);
 }
 
 unsigned short indexed_indirect_addr(magic6502_ctx* ctx) {
@@ -34,7 +35,7 @@ unsigned char immediate(magic6502_ctx* ctx) {
 }
 
 unsigned short absolute_addr(magic6502_ctx* ctx) {
-  return (*ctx->memory)[ctx->pc + 1] & ((*ctx->memory)[ctx->pc + 2] << 8);
+  return (*ctx->memory)[ctx->pc + 1] | ((*ctx->memory)[ctx->pc + 2] << 8);
 }
 
 unsigned short absolute_x_addr(magic6502_ctx* ctx) {

@@ -5,7 +5,6 @@
 void reset_registers(magic6502_ctx* ctx) {
   unsigned char** memory = ctx->memory;
   memset(ctx, 0, sizeof(magic6502_ctx));
-  ctx->sp = 0xFF;
   ctx->memory = memory;
 }
 
@@ -32,11 +31,13 @@ void execute_interrupt(magic6502_ctx* ctx, char type) {
   }
   if (type != MAGIC6502_INT_RESET) {
     push_short_to_stack(ctx, ctx->pc + 1);
-    push_to_stack(ctx, serialize_status(ctx));
+    push_to_stack(ctx, serialize_status(ctx, ctx->b));
   }
   ctx->i = 1;
-  ctx->pc = (*ctx->memory)[addr_vector] & ((*ctx->memory)[addr_vector + 1] << 8);
+  ctx->pc = (*ctx->memory)[addr_vector] | ((*ctx->memory)[addr_vector + 1] << 8);
   if (type == MAGIC6502_INT_BRK) {
     ctx->b = 1;
+  } else {
+    ctx->b = 0;
   }
 }

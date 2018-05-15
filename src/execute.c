@@ -38,7 +38,7 @@ void execute(magic6502_ctx* ctx) {
       pc_inc = 3;
       break;
     case 0x10:
-      pc_inc = (bpl(ctx, relative_addr(ctx)) == 1) ? 0 : 2;
+      bpl(ctx, relative_addr(ctx));
       break;
     case 0x11:
       ora(ctx, fetch_char(ctx, indirect_indexed_addr(ctx)));
@@ -105,7 +105,7 @@ void execute(magic6502_ctx* ctx) {
       pc_inc = 3;
       break;
     case 0x30:
-      pc_inc = (bmi(ctx, relative_addr(ctx)) == 1) ? 0 : 2;
+      bmi(ctx, relative_addr(ctx));
       break;
     case 0x31:
       and(ctx, fetch_char(ctx, indirect_indexed_addr(ctx)));
@@ -169,7 +169,7 @@ void execute(magic6502_ctx* ctx) {
       pc_inc = 3;
       break;
     case 0x50:
-      pc_inc = (bvc(ctx, relative_addr(ctx)) == 1) ? 0 : 2;
+      bvc(ctx, relative_addr(ctx));
       break;
     case 0x51:
       eor(ctx, fetch_char(ctx, indirect_indexed_addr(ctx)));
@@ -214,7 +214,7 @@ void execute(magic6502_ctx* ctx) {
       pc_inc = 1;
       break;
     case 0x69:
-      adc(ctx, fetch_char(ctx, immediate(ctx)));
+      adc(ctx, immediate(ctx));
       break;
     case 0x6A:
       ror(ctx, 0, 1);
@@ -233,7 +233,7 @@ void execute(magic6502_ctx* ctx) {
       pc_inc = 3;
       break;
     case 0x70:
-      pc_inc = (bvs(ctx, relative_addr(ctx)) == 1) ? 0 : 2;
+      bvs(ctx, relative_addr(ctx));
       break;
     case 0x71:
       adc(ctx, fetch_char(ctx, indirect_indexed_addr(ctx)));
@@ -273,9 +273,11 @@ void execute(magic6502_ctx* ctx) {
       break;
     case 0x88:
       dey(ctx);
+      pc_inc = 1;
       break;
     case 0x8A:
       txa(ctx);
+      pc_inc = 1;
       break;
     case 0x8C:
       sty(ctx, absolute_addr(ctx));
@@ -290,7 +292,7 @@ void execute(magic6502_ctx* ctx) {
       pc_inc = 3;
       break;
     case 0x90:
-      pc_inc = (bcc(ctx, relative_addr(ctx)) == 1) ? 0 : 2;
+      bcc(ctx, relative_addr(ctx));
       break;
     case 0x91:
       sta(ctx, indirect_indexed_addr(ctx));
@@ -362,7 +364,7 @@ void execute(magic6502_ctx* ctx) {
       pc_inc = 3;
       break;
     case 0xB0:
-      pc_inc = (bcs(ctx, relative_addr(ctx)) == 1) ? 0 : 2;
+      bcs(ctx, relative_addr(ctx));
       break;
     case 0xB1:
       lda(ctx, fetch_char(ctx, indirect_indexed_addr(ctx)));
@@ -439,7 +441,7 @@ void execute(magic6502_ctx* ctx) {
       pc_inc = 3;
       break;
     case 0xD0:
-      pc_inc = (bne(ctx, relative_addr(ctx)) == 1) ? 0 : 2;
+      bne(ctx, relative_addr(ctx));
       break;
     case 0xD1:
       cmp(ctx, fetch_char(ctx, indirect_indexed_addr(ctx)));
@@ -501,7 +503,7 @@ void execute(magic6502_ctx* ctx) {
       pc_inc = 3;
       break;
     case 0xF0:
-      pc_inc = (beq(ctx, relative_addr(ctx)) == 1) ? 0 : 2;
+      beq(ctx, relative_addr(ctx));
       break;
     case 0xF1:
       sbc(ctx, fetch_char(ctx, indirect_indexed_addr(ctx)));
