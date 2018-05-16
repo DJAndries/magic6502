@@ -249,7 +249,8 @@ void execute(magic6502_ctx* ctx) {
       pc_inc = 1;
       break;
     case 0x79:
-      adc(ctx, immediate(ctx));
+      adc(ctx, fetch_char(ctx, absolute_y_addr(ctx)));
+      pc_inc = 3;
       break;
     case 0x7D:
       adc(ctx, fetch_char(ctx, absolute_x_addr(ctx)));
@@ -472,7 +473,7 @@ void execute(magic6502_ctx* ctx) {
       cpx(ctx, immediate(ctx));
       break;
     case 0xE1:
-      sbc(ctx, fetch_char(ctx, indirect_indexed_addr(ctx)));
+      sbc(ctx, fetch_char(ctx, indexed_indirect_addr(ctx)));
       break;
     case 0xE4:
       cpx(ctx, fetch_char(ctx, zero_page_addr(ctx)));

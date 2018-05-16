@@ -50,7 +50,7 @@ void beq(magic6502_ctx* ctx, unsigned short addr) {
 void bit(magic6502_ctx* ctx, unsigned char val) {
   ctx->z = (ctx->a & val) == 0;
   ctx->n = val >> 7;
-  ctx->v = (val >> 6) && 0x01;
+  ctx->v = (val >> 6) & 0x01;
 }
 
 void bmi(magic6502_ctx* ctx, unsigned short addr) {
@@ -171,7 +171,7 @@ void jmp(magic6502_ctx* ctx, unsigned short addr) {
 }
 
 void jsr(magic6502_ctx* ctx, unsigned short addr) {
-  push_short_to_stack(ctx, ctx->pc + 3);
+  push_short_to_stack(ctx, ctx->pc + 3 - 1);
   ctx->pc = addr;
 }
 
@@ -194,7 +194,7 @@ void ldy(magic6502_ctx* ctx, unsigned char val) {
 }
 
 void lsr(magic6502_ctx* ctx, unsigned short addr, char a) {
-  unsigned char value = a == 1 ? a : (*ctx->memory)[addr];
+  unsigned char value = a == 1 ? ctx->a : (*ctx->memory)[addr];
   ctx->c = value & 0x01;
   value = value >> 1;
   if (a == 1) {
@@ -231,7 +231,7 @@ void plp(magic6502_ctx* ctx) {
 }
 
 void rol(magic6502_ctx* ctx, unsigned short addr, char a) {
-  unsigned char value = a == 1 ? a : (*ctx->memory)[addr];
+  unsigned char value = a == 1 ? ctx->a : (*ctx->memory)[addr];
   unsigned char result = (value << 1) | ctx->c;
   ctx->c = (value & 0x80) >> 7;
   if (a == 1) {
@@ -244,7 +244,7 @@ void rol(magic6502_ctx* ctx, unsigned short addr, char a) {
 }
 
 void ror(magic6502_ctx* ctx, unsigned short addr, char a) {
-  unsigned char value = a == 1 ? a : (*ctx->memory)[addr];
+  unsigned char value = a == 1 ? ctx->a : (*ctx->memory)[addr];
   unsigned char result = (value >> 1) | (ctx->c << 7);
   ctx->c = value & 0x01;
   if (a == 1) {
@@ -262,14 +262,14 @@ void rti(magic6502_ctx* ctx) {
 }
 
 void rts(magic6502_ctx* ctx) {
-  ctx->pc = pull_short_from_stack(ctx);
+  ctx->pc = pull_short_from_stack(ctx) + 1;
 }
 
 void sbc(magic6502_ctx* ctx, unsigned char val) {
   unsigned short result = ctx->a - val - (1 - ctx->c);
-  carry_calc(ctx, result);
+  ctx->c = ((result & 0x100) >> 8) == 1 ? 0 : 1;
   zero_calc(ctx, result);
-  overflow_calc(ctx, val, result);
+  overflow_calc(ctx, 0xFF - val, result);
   negative_calc(ctx, result);
   ctx->a = result;
 }

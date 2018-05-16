@@ -1,5 +1,4 @@
 #include "addressing.h"
-#include <stdio.h>
 
 unsigned char fetch_char(magic6502_ctx* ctx, unsigned short addr) {
   return (*ctx->memory)[addr];

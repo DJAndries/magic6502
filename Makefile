@@ -13,7 +13,7 @@ obj/%.o: test/%.c
 	gcc -Wall -O -c $< -Iinclude -o $@
 
 obj/%.o: src/%.c
-	gcc -Wall -O -fpic -c $< -Iinclude -o $@
+	gcc -Wall -O -c $< -Iinclude -o $@
 
 lib/libmagic6502.so: obj/magic6502.o obj/addressing.o obj/execute.o \
 	obj/instr_helpers.o obj/instructions.o obj/interrupts.o

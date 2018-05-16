@@ -3,7 +3,7 @@
 void overflow_calc(magic6502_ctx* ctx, unsigned char b, unsigned short c) {
   /* First part of test: a and b must have same sign */
   /* Second part of test: a and c must have different signs */
-  ctx->v = ((~(ctx->a ^ b)) & (ctx->a ^ c) & 0x80) >> 7;
+  ctx->v = (((ctx->a ^ c) & (b ^ c) & 0x80) >> 7) & 0x01;
 }
 
 void zero_calc(magic6502_ctx* ctx, unsigned short result) {

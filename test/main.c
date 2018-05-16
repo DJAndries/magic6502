@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include "magic6502.h"
 
+#define CALL_TRACE_ENABLED 1
+#define CALL_TRACE_INST_COUNT_START 26764800
+
 void read_program(unsigned char* memory) {
   FILE* fp;
   fp = fopen("test_prog.bin", "rb");
@@ -18,21 +21,25 @@ int main(int argc, char** argv) {
   magic_ctx->pc = 0x400;
 
   while (magic_ctx->pc != 1 && magic_ctx->pc != 2) {
-    printf("A: %x\n", magic_ctx->a);
-    printf("Y: %x\n", magic_ctx->y);
-    printf("X: %x\n", magic_ctx->x);
-    if (memory[magic_ctx->pc] == 0) {
-      printf("BREAK!");
+    if (CALL_TRACE_ENABLED && inst_count > CALL_TRACE_INST_COUNT_START) {
+      printf("A: %x\nY: %x\nX: %x\n", magic_ctx->a, magic_ctx->y, magic_ctx->x);
+      if (memory[magic_ctx->pc] == 0) {
+        printf("BREAK! %x %x\n", memory[0xFFFE], memory[0xFFFF]);
+      }
+      printf("C=%x Z=%x n=%x v=%x\n\
+Stack top: %x %x\n\
+%x %x\n\n",
+        magic_ctx->c, magic_ctx->z, magic_ctx->n, magic_ctx->v,
+        magic_ctx->sp, memory[0x100 | (magic_ctx->sp + 1)], magic_ctx->pc, memory[magic_ctx->pc]);
     }
-    /* printf("C=%cu Z=%cu I=%cu D=%cu B=%cu v=%cu n=%cu", magic_ctx->c) */
-    printf("Stack top: %x %x\n", magic_ctx->sp, memory[0x100 | (magic_ctx->sp + 1)]);
-    printf("%x %x\n\n", magic_ctx->pc, memory[magic_ctx->pc]);
     magic6502_exec(magic_ctx);
     inst_count = inst_count + 1;
   }
 
   if (magic_ctx->pc == 1) {
     printf("Fail\n");
+  } else {
+    printf("Pass!!\n");
   }
 
   printf("Instructions executed: %lu\n", inst_count);
