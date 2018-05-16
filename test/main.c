@@ -2,8 +2,12 @@
 #include <stdlib.h>
 #include "magic6502.h"
 
-#define CALL_TRACE_ENABLED 1
+#define CALL_TRACE_ENABLED 0
 #define CALL_TRACE_INST_COUNT_START 26764800
+
+unsigned char* memory_access(void* magic_ctx, unsigned short addr) {
+  return &((magic6502_ctx*)magic_ctx)->m[addr];
+}
 
 void read_program(unsigned char* memory) {
   FILE* fp;
@@ -15,7 +19,7 @@ void read_program(unsigned char* memory) {
 int main(int argc, char** argv) {
   unsigned long inst_count = 0;
   unsigned char* memory = (unsigned char*)malloc(sizeof(unsigned char*) * 65536);
-  magic6502_ctx* magic_ctx = magic6502_init(&memory);
+  magic6502_ctx* magic_ctx = magic6502_init(memory, memory_access);
 
   read_program(memory);
   magic_ctx->pc = 0x400;

@@ -2,7 +2,7 @@
 #include "addressing.h"
 
 void execute(magic6502_ctx* ctx) {
-  unsigned char inst = (*ctx->memory)[ctx->pc];
+  unsigned char inst = *ctx->ma(ctx, ctx->pc);
   unsigned char pc_inc = 2;
   switch (inst) {
     case 0x00:

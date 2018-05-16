@@ -4,7 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-__attribute__((visibility("default"))) magic6502_ctx* magic6502_init(unsigned char** memory) {
+__attribute__((visibility("default"))) \
+magic6502_ctx* magic6502_init(unsigned char* m, unsigned char* (*ma)(void*, unsigned short)) {
   magic6502_ctx* ctx = (magic6502_ctx*)malloc(sizeof(magic6502_ctx));
   if (ctx == 0) {
     return 0;
@@ -12,7 +13,8 @@ __attribute__((visibility("default"))) magic6502_ctx* magic6502_init(unsigned ch
 
   memset(ctx, 0, sizeof(magic6502_ctx));
 
-  ctx->memory = memory;
+  ctx->m = m;
+  ctx->ma = ma;
 
   return ctx;
 }

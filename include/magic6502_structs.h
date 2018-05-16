@@ -21,7 +21,8 @@ typedef struct {
   unsigned char v;
   unsigned char n;
 
-  unsigned char** memory;
+  unsigned char* m;
+  unsigned char* (*ma)(void*, unsigned short);
 } magic6502_ctx;
 
 #endif
