@@ -1,10 +1,10 @@
 all: lib obj bin lib/libmagic6502.so bin/test
 
-bin/test: bin/test_prog.bin bin/libmagic6502.so obj/main.o
+bin/test: bin/functional_test.bin bin/libmagic6502.so obj/main.o
 	gcc -lm -o bin/test obj/main.o -L./lib -l:libmagic6502.so
 
-bin/test_prog.bin:
-	cp test/test_prog.bin bin/test_prog.bin
+bin/functional_test.bin:
+	cp test/functional_test.bin bin/functional_test.bin
 
 bin/libmagic6502.so: lib/libmagic6502.so
 	cp lib/libmagic6502.so bin/libmagic6502.so
