@@ -23,6 +23,7 @@ typedef struct {
 
   unsigned char* m;
   unsigned char* (*ma)(void*, unsigned short);
+  unsigned short address_accessed;
 } magic6502_ctx;
 
 #endif
