@@ -23,8 +23,8 @@ __attribute__((visibility("default"))) void magic6502_interrupt(magic6502_ctx* c
   execute_interrupt(ctx, type);
 }
 
-__attribute__((visibility("default"))) void magic6502_exec(magic6502_ctx* ctx) {
-  execute(ctx);
+__attribute__((visibility("default"))) unsigned char magic6502_exec(magic6502_ctx* ctx) {
+  return execute(ctx);
 }
 
 __attribute__((visibility("default"))) void magic6502_free(magic6502_ctx* ctx) {

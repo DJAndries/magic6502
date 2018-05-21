@@ -3,6 +3,6 @@
 
 #include "magic6502_structs.h"
 
-void execute(magic6502_ctx* ctx);
+unsigned char execute(magic6502_ctx* ctx);
 
 #endif

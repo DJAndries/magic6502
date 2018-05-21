@@ -1,7 +1,8 @@
 #include "instructions.h"
 #include "addressing.h"
+#include "cycle_count.h"
 
-void execute(magic6502_ctx* ctx) {
+unsigned char execute(magic6502_ctx* ctx) {
   unsigned char inst = *ctx->ma(ctx, ctx->pc);
   unsigned char pc_inc = 2;
   switch (inst) {
@@ -535,4 +536,5 @@ void execute(magic6502_ctx* ctx) {
       pc_inc = 1;
   }
   ctx->pc = ctx->pc + pc_inc;
+  return cycle_counts[inst];
 }
