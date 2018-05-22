@@ -18,14 +18,14 @@ void and(magic6502_ctx* ctx, unsigned char val) {
 }
 
 void asl(magic6502_ctx* ctx, unsigned short addr, char a) {
-  unsigned short result = (a == 1 ? ctx->a : *ctx->ma(ctx, addr)) << 1;
+  unsigned short result = (a == 1 ? ctx->a : *ctx->ma(ctx->app_ctx, addr)) << 1;
   carry_calc(ctx, result);
   zero_calc(ctx, result);
   negative_calc(ctx, result);
   if (a == 1) {
     set_acc(ctx, result);
   } else {
-    *ctx->ma(ctx, addr) = result & 0xFF;
+    *ctx->ma(ctx->app_ctx, addr) = result & 0xFF;
   }
 }
 
@@ -125,9 +125,9 @@ void cpy(magic6502_ctx* ctx, unsigned char val) {
 }
 
 void dec(magic6502_ctx* ctx, unsigned short addr) {
-  *ctx->ma(ctx, addr) = *ctx->ma(ctx, addr) - 1;
-  zero_calc(ctx, *ctx->ma(ctx, addr));
-  negative_calc(ctx, *ctx->ma(ctx, addr));
+  *ctx->ma(ctx->app_ctx, addr) = *ctx->ma(ctx->app_ctx, addr) - 1;
+  zero_calc(ctx, *ctx->ma(ctx->app_ctx, addr));
+  negative_calc(ctx, *ctx->ma(ctx->app_ctx, addr));
 }
 
 void dex(magic6502_ctx* ctx) {
@@ -149,9 +149,9 @@ void eor(magic6502_ctx* ctx, unsigned char val) {
 }
 
 void inc(magic6502_ctx* ctx, unsigned short addr) {
-  *ctx->ma(ctx, addr) = *ctx->ma(ctx, addr) + 1;
-  zero_calc(ctx, *ctx->ma(ctx, addr));
-  negative_calc(ctx, *ctx->ma(ctx, addr));
+  *ctx->ma(ctx->app_ctx, addr) = *ctx->ma(ctx->app_ctx, addr) + 1;
+  zero_calc(ctx, *ctx->ma(ctx->app_ctx, addr));
+  negative_calc(ctx, *ctx->ma(ctx->app_ctx, addr));
 }
 
 void inx(magic6502_ctx* ctx) {
@@ -194,13 +194,13 @@ void ldy(magic6502_ctx* ctx, unsigned char val) {
 }
 
 void lsr(magic6502_ctx* ctx, unsigned short addr, char a) {
-  unsigned char value = a == 1 ? ctx->a : *ctx->ma(ctx, addr);
+  unsigned char value = a == 1 ? ctx->a : *ctx->ma(ctx->app_ctx, addr);
   ctx->c = value & 0x01;
   value = value >> 1;
   if (a == 1) {
     ctx->a = value;
   } else {
-    *ctx->ma(ctx, addr) = value;
+    *ctx->ma(ctx->app_ctx, addr) = value;
   }
   zero_calc(ctx, value);
   negative_calc(ctx, value);
@@ -231,26 +231,26 @@ void plp(magic6502_ctx* ctx) {
 }
 
 void rol(magic6502_ctx* ctx, unsigned short addr, char a) {
-  unsigned char value = a == 1 ? ctx->a : *ctx->ma(ctx, addr);
+  unsigned char value = a == 1 ? ctx->a : *ctx->ma(ctx->app_ctx, addr);
   unsigned char result = (value << 1) | ctx->c;
   ctx->c = (value & 0x80) >> 7;
   if (a == 1) {
     ctx->a = result;
   } else {
-    *ctx->ma(ctx, addr) = result;
+    *ctx->ma(ctx->app_ctx, addr) = result;
   }
   zero_calc(ctx, result);
   negative_calc(ctx, result);
 }
 
 void ror(magic6502_ctx* ctx, unsigned short addr, char a) {
-  unsigned char value = a == 1 ? ctx->a : *ctx->ma(ctx, addr);
+  unsigned char value = a == 1 ? ctx->a : *ctx->ma(ctx->app_ctx, addr);
   unsigned char result = (value >> 1) | (ctx->c << 7);
   ctx->c = value & 0x01;
   if (a == 1) {
     ctx->a = result;
   } else {
-    *ctx->ma(ctx, addr) = result;
+    *ctx->ma(ctx->app_ctx, addr) = result;
   }
   zero_calc(ctx, result);
   negative_calc(ctx, result);
@@ -287,15 +287,15 @@ void sei(magic6502_ctx* ctx) {
 }
 
 void sta(magic6502_ctx* ctx, unsigned short addr) {
-  *ctx->ma(ctx, addr) = ctx->a;
+  *ctx->ma(ctx->app_ctx, addr) = ctx->a;
 }
 
 void stx(magic6502_ctx* ctx, unsigned short addr) {
-  *ctx->ma(ctx, addr) = ctx->x;
+  *ctx->ma(ctx->app_ctx, addr) = ctx->x;
 }
 
 void sty(magic6502_ctx* ctx, unsigned short addr) {
-  *ctx->ma(ctx, addr) = ctx->y;
+  *ctx->ma(ctx->app_ctx, addr) = ctx->y;
 }
 
 void tax(magic6502_ctx* ctx) {

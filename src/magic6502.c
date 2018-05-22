@@ -5,7 +5,7 @@
 #include <string.h>
 
 __attribute__((visibility("default"))) \
-magic6502_ctx* magic6502_init(unsigned char* m, unsigned char* (*ma)(void*, unsigned short)) {
+magic6502_ctx* magic6502_init(void* app_ctx, unsigned char* (*ma)(void*, unsigned short)) {
   magic6502_ctx* ctx = (magic6502_ctx*)malloc(sizeof(magic6502_ctx));
   if (ctx == 0) {
     return 0;
@@ -13,7 +13,7 @@ magic6502_ctx* magic6502_init(unsigned char* m, unsigned char* (*ma)(void*, unsi
 
   memset(ctx, 0, sizeof(magic6502_ctx));
 
-  ctx->m = m;
+  ctx->app_ctx = app_ctx;
   ctx->ma = ma;
 
   return ctx;

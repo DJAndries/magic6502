@@ -5,15 +5,19 @@
 #define CALL_TRACE_ENABLED 1
 #define CALL_TRACE_INST_COUNT_START 26764800
 
-void read_program(char* filename, unsigned char* memory) {
+typedef struct {
+  unsigned char* memory;
+} test_ctx;
+
+void read_program(char* filename, void* ctx) {
   FILE* fp;
   fp = fopen(filename, "rb");
-  fread(memory + 0x400, sizeof(unsigned char), 0xFFFF - 0x400, fp);
+  fread(((test_ctx*)ctx)->memory + 0x400, sizeof(unsigned char), 0xFFFF - 0x400, fp);
   fclose(fp);
 }
 
-unsigned char* memory_access(void* magic_ctx, unsigned short addr) {
-  return &((magic6502_ctx*)magic_ctx)->m[addr];
+unsigned char* memory_access(void* ctx, unsigned short addr) {
+  return &((test_ctx*)ctx)->memory[addr];
 }
 
 void call_trace(magic6502_ctx* magic_ctx, unsigned char* memory, unsigned long inst_count) {
@@ -27,15 +31,15 @@ Stack top: %x %x\n\
   }
 }
 
-char run_test(unsigned char* memory) {
+char run_test(test_ctx* ctx) {
   unsigned long inst_count = 0;
-  magic6502_ctx* magic_ctx = magic6502_init(memory, memory_access);
+  magic6502_ctx* magic_ctx = magic6502_init(ctx, memory_access);
 
-  read_program("functional_test.bin", memory);
+  read_program("functional_test.bin", ctx);
   magic_ctx->pc = 0x400;
 
   while (magic_ctx->pc != 1 && magic_ctx->pc != 2) {
-    call_trace(magic_ctx, memory, inst_count);
+    call_trace(magic_ctx, ctx->memory, inst_count);
     magic6502_exec(magic_ctx);
     inst_count = inst_count + 1;
   }
@@ -54,10 +58,12 @@ char run_test(unsigned char* memory) {
 }
 
 int main(int argc, char** argv) {
-  unsigned char* memory = (unsigned char*)malloc(sizeof(unsigned char*) * 65536);
+  test_ctx* ctx = (test_ctx*)malloc(sizeof(test_ctx));
+  ctx->memory = (unsigned char*)malloc(sizeof(unsigned char*) * 65536);
 
-  run_test(memory);
+  run_test(ctx);
 
-  free(memory);
+  free(ctx->memory);
+  free(ctx);
   return 0;
 }

@@ -3,7 +3,7 @@
 #include "cycle_count.h"
 
 unsigned char execute(magic6502_ctx* ctx) {
-  unsigned char inst = *ctx->ma(ctx, ctx->pc);
+  unsigned char inst = *ctx->ma(ctx->app_ctx, ctx->pc);
   unsigned char pc_inc = 2;
   switch (inst) {
     case 0x00:

@@ -4,9 +4,9 @@
 
 void reset_registers(magic6502_ctx* ctx) {
   unsigned char* (*ma)(void*, unsigned short) = ctx->ma;
-  unsigned char* m = ctx->m;
+  void* app_ctx = ctx->app_ctx;
   memset(ctx, 0, sizeof(magic6502_ctx));
-  ctx->m = m;
+  ctx->app_ctx = app_ctx;
   ctx->ma = ma;
 }
 
@@ -43,5 +43,5 @@ void execute_interrupt(magic6502_ctx* ctx, char type) {
     push_to_stack(ctx, serialize_status(ctx, ctx->b));
   }
   ctx->i = 1;
-  ctx->pc = *ctx->ma(ctx, addr_vector) | (*ctx->ma(ctx, addr_vector + 1) << 8);
+  ctx->pc = *ctx->ma(ctx->app_ctx, addr_vector) | (*ctx->ma(ctx->app_ctx, addr_vector + 1) << 8);
 }
