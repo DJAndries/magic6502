@@ -23,7 +23,9 @@ typedef struct {
 
   void* app_ctx;
   unsigned char* (*ma)(void*, unsigned short);
+
   unsigned short address_accessed;
+  unsigned char is_last_instr_write;
 } magic6502_ctx;
 
 #endif

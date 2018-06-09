@@ -29,18 +29,19 @@ void push_to_stack(magic6502_ctx* ctx, unsigned char value) {
 
 void push_short_to_stack(magic6502_ctx* ctx, unsigned short value) {
   *ctx->ma(ctx->app_ctx, 0x0100 | ctx->sp) = (value & 0xFF00) >> 8;
-  *ctx->ma(ctx->app_ctx, 0x0100 | (ctx->sp - 1)) = value & 0xFF;
+  *ctx->ma(ctx->app_ctx, 0x0100 | (ctx->sp - 1 & 0xFF)) = value & 0xFF;
   ctx->sp = ctx->sp - 2;
 }
 
 unsigned char pull_from_stack(magic6502_ctx* ctx) {
-  unsigned char value = *ctx->ma(ctx->app_ctx, 0x0100 | (ctx->sp + 1));
+  unsigned char value = *ctx->ma(ctx->app_ctx, 0x0100 | (ctx->sp + 1 & 0xFF));
   ctx->sp = ctx->sp + 1;
   return value;
 }
 
 unsigned short pull_short_from_stack(magic6502_ctx* ctx) {
-  unsigned short value = *ctx->ma(ctx->app_ctx, 0x0100 | (ctx->sp + 1)) | (*ctx->ma(ctx->app_ctx, 0x0100 | (ctx->sp + 2)) << 8);
+  unsigned short value = *ctx->ma(ctx->app_ctx, 0x0100 | (ctx->sp + 1 & 0xFF)) |
+    (*ctx->ma(ctx->app_ctx, 0x0100 | (ctx->sp + 2 & 0xFF)) << 8);
   ctx->sp = ctx->sp + 2;
   return value;
 }

@@ -26,6 +26,7 @@ void asl(magic6502_ctx* ctx, unsigned short addr, char a) {
     set_acc(ctx, result);
   } else {
     *ctx->ma(ctx->app_ctx, addr) = result & 0xFF;
+    ctx->is_last_instr_write = 1;
   }
 }
 
@@ -126,6 +127,7 @@ void cpy(magic6502_ctx* ctx, unsigned char val) {
 
 void dec(magic6502_ctx* ctx, unsigned short addr) {
   *ctx->ma(ctx->app_ctx, addr) = *ctx->ma(ctx->app_ctx, addr) - 1;
+  ctx->is_last_instr_write = 1;
   zero_calc(ctx, *ctx->ma(ctx->app_ctx, addr));
   negative_calc(ctx, *ctx->ma(ctx->app_ctx, addr));
 }
@@ -150,6 +152,7 @@ void eor(magic6502_ctx* ctx, unsigned char val) {
 
 void inc(magic6502_ctx* ctx, unsigned short addr) {
   *ctx->ma(ctx->app_ctx, addr) = *ctx->ma(ctx->app_ctx, addr) + 1;
+  ctx->is_last_instr_write = 1;
   zero_calc(ctx, *ctx->ma(ctx->app_ctx, addr));
   negative_calc(ctx, *ctx->ma(ctx->app_ctx, addr));
 }
@@ -201,6 +204,7 @@ void lsr(magic6502_ctx* ctx, unsigned short addr, char a) {
     ctx->a = value;
   } else {
     *ctx->ma(ctx->app_ctx, addr) = value;
+    ctx->is_last_instr_write = 1;
   }
   zero_calc(ctx, value);
   negative_calc(ctx, value);
@@ -238,6 +242,7 @@ void rol(magic6502_ctx* ctx, unsigned short addr, char a) {
     ctx->a = result;
   } else {
     *ctx->ma(ctx->app_ctx, addr) = result;
+    ctx->is_last_instr_write = 1;
   }
   zero_calc(ctx, result);
   negative_calc(ctx, result);
@@ -251,6 +256,7 @@ void ror(magic6502_ctx* ctx, unsigned short addr, char a) {
     ctx->a = result;
   } else {
     *ctx->ma(ctx->app_ctx, addr) = result;
+    ctx->is_last_instr_write = 1;
   }
   zero_calc(ctx, result);
   negative_calc(ctx, result);
@@ -288,14 +294,17 @@ void sei(magic6502_ctx* ctx) {
 
 void sta(magic6502_ctx* ctx, unsigned short addr) {
   *ctx->ma(ctx->app_ctx, addr) = ctx->a;
+  ctx->is_last_instr_write = 1;
 }
 
 void stx(magic6502_ctx* ctx, unsigned short addr) {
   *ctx->ma(ctx->app_ctx, addr) = ctx->x;
+  ctx->is_last_instr_write = 1;
 }
 
 void sty(magic6502_ctx* ctx, unsigned short addr) {
   *ctx->ma(ctx->app_ctx, addr) = ctx->y;
+  ctx->is_last_instr_write = 1;
 }
 
 void tax(magic6502_ctx* ctx) {

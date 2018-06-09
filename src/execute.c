@@ -5,6 +5,8 @@
 unsigned char execute(magic6502_ctx* ctx) {
   unsigned char inst = *ctx->ma(ctx->app_ctx, ctx->pc);
   unsigned char pc_inc = 2;
+  ctx->address_accessed = 0;
+  ctx->is_last_instr_write = 0;
   switch (inst) {
     case 0x00:
       brk(ctx);
